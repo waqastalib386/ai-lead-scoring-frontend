@@ -21,27 +21,20 @@ async function predictLead() {
   document.getElementById("score").innerText = data.score;
   document.getElementById("category").innerText = data.lead_category;
 
-  loadLeads();
+  addRow(payload, data);
 }
 
-async function loadLeads() {
-  const res = await fetch(API + "/leads");
-  const leads = await res.json();
-
+function addRow(payload, data) {
   const table = document.getElementById("table");
-  table.innerHTML = "";
 
-  leads.forEach(l => {
-    table.innerHTML += `
-      <tr>
-        <td>${l.age}</td>
-        <td>${l.income}</td>
-        <td>${l.source}</td>
-        <td>${l.score}</td>
-        <td>${l.category}</td>
-      </tr>
-    `;
-  });
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${payload.age}</td>
+    <td>${payload.income}</td>
+    <td>${payload.source}</td>
+    <td>${data.score}</td>
+    <td>${data.lead_category}</td>
+  `;
+
+  table.prepend(row);
 }
-
-loadLeads();
