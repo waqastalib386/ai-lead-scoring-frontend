@@ -1,40 +1,55 @@
 
-const API = "https://ai-lead-scoring-backend.onrender.com";
+const API_BASE = "https://ai-lead-scoring-backend.onrender.com";
+
+const tableBody = document.getElementById("table");
+const scoreEl = document.getElementById("score");
+const categoryEl = document.getElementById("category");
+
+async function loadLeads() {
+    const res = await fetch(`${API_BASE}/leads`);
+    const data = await res.json();
+
+    tableBody.innerHTML = "";
+
+    data.forEach(lead => {
+        const row = `
+            <tr>
+                <td>${lead.age}</td>
+                <td>${lead.income}</td>
+                <td>${lead.source}</td>
+                <td>${lead.score}</td>
+                <td>${lead.category}</td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+}
 
 async function predictLead() {
-  const payload = {
-    age: Number(document.getElementById("age").value),
-    income: Number(document.getElementById("income").value),
-    source: document.getElementById("source").value,
-    time_spent: Number(document.getElementById("time_spent").value),
-    pages_visited: Number(document.getElementById("pages_visited").value)
-  };
+    const age = document.getElementById("age").value;
+    const income = document.getElementById("income").value;
+    const source = document.getElementById("source").value;
+    const time_spent = document.getElementById("time_spent").value;
+    const pages_visited = document.getElementById("pages_visited").value;
 
-  const res = await fetch(API + "/predict", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
+    const res = await fetch(`${API_BASE}/predict`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            age: Number(age),
+            income: Number(income),
+            source,
+            time_spent: Number(time_spent),
+            pages_visited: Number(pages_visited)
+        })
+    });
 
-  const data = await res.json();
+    const result = await res.json();
 
-  document.getElementById("score").innerText = data.score;
-  document.getElementById("category").innerText = data.lead_category;
+    scoreEl.innerText = result.score;
+    categoryEl.innerText = result.lead_category;
 
-  addRow(payload, data);
+    loadLeads(); // 🔥 MOST IMPORTANT LINE
 }
 
-function addRow(payload, data) {
-  const table = document.getElementById("table");
-
-  const row = document.createElement("tr");
-  row.innerHTML = `
-    <td>${payload.age}</td>
-    <td>${payload.income}</td>
-    <td>${payload.source}</td>
-    <td>${data.score}</td>
-    <td>${data.lead_category}</td>
-  `;
-
-  table.prepend(row);
-}
+window.onload = loadLeads;
