@@ -1,55 +1,47 @@
 
-const API_BASE = "https://ai-lead-scoring-backend.onrender.com";
-
-const tableBody = document.getElementById("table");
-const scoreEl = document.getElementById("score");
-const categoryEl = document.getElementById("category");
-
-async function loadLeads() {
-    const res = await fetch(`${API_BASE}/leads`);
-    const data = await res.json();
-
-    tableBody.innerHTML = "";
-
-    data.forEach(lead => {
-        const row = `
-            <tr>
-                <td>${lead.age}</td>
-                <td>${lead.income}</td>
-                <td>${lead.source}</td>
-                <td>${lead.score}</td>
-                <td>${lead.category}</td>
-            </tr>
-        `;
-        tableBody.innerHTML += row;
-    });
-}
+const API_URL = "https://ai-lead-scoring-backend.onrender.com";
 
 async function predictLead() {
-    const age = document.getElementById("age").value;
-    const income = document.getElementById("income").value;
-    const source = document.getElementById("source").value;
-    const time_spent = document.getElementById("time_spent").value;
-    const pages_visited = document.getElementById("pages_visited").value;
+  const data = {
+    age: Number(document.getElementById("age").value),
+    income: Number(document.getElementById("income").value),
+    source: document.getElementById("source").value,
+    time_spent: Number(document.getElementById("time_spent").value),
+    pages_visited: Number(document.getElementById("pages_visited").value)
+  };
 
-    const res = await fetch(`${API_BASE}/predict`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            age: Number(age),
-            income: Number(income),
-            source,
-            time_spent: Number(time_spent),
-            pages_visited: Number(pages_visited)
-        })
-    });
+  const res = await fetch(API_URL + "/predict", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
 
-    const result = await res.json();
+  const result = await res.json();
 
-    scoreEl.innerText = result.score;
-    categoryEl.innerText = result.lead_category;
+  document.getElementById("score").innerText = result.score;
+  document.getElementById("category").innerText = result.lead_category;
 
-    loadLeads(); // 🔥 MOST IMPORTANT LINE
+  loadLeads();
 }
 
-window.onload = loadLeads;
+async function loadLeads() {
+  const res = await fetch(API_URL + "/leads");
+  const leads = await res.json();
+
+  const table = document.getElementById("table");
+  table.innerHTML = "";
+
+  leads.forEach(l => {
+    table.innerHTML += `
+      <tr>
+        <td>${l.age}</td>
+        <td>${l.income}</td>
+        <td>${l.source}</td>
+        <td>${l.score}</td>
+        <td>${l.category}</td>
+      </tr>
+    `;
+  });
+}
+
+loadLeads();

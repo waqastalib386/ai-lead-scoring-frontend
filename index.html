@@ -1,124 +1,40 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>AI Lead Scoring Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>AI Lead Scoring</title>
 </head>
+<body>
 
-<body class="bg-slate-100 font-sans">
+<h2>AI Lead Scoring Demo</h2>
 
-  <div class="max-w-6xl mx-auto p-6">
+<input id="age" placeholder="Age">
+<input id="income" placeholder="Income">
+<input id="source" placeholder="Source">
+<input id="time_spent" placeholder="Time Spent">
+<input id="pages_visited" placeholder="Pages Visited">
 
-    <!-- Header -->
-    <h1 class="text-3xl font-bold mb-6">AI Lead Scoring Dashboard</h1>
+<br><br>
+<button onclick="predictLead()">Predict Lead</button>
 
-    <!-- Form Card -->
-    <div class="bg-white rounded-xl shadow p-6 mb-6">
-      <h2 class="text-xl font-semibold mb-4">Add Lead</h2>
+<h3>Result</h3>
+<p>Score: <span id="score">-</span></p>
+<p>Category: <span id="category">-</span></p>
 
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <input id="age" type="number" placeholder="Age" class="border rounded px-3 py-2">
-        <input id="income" type="number" placeholder="Income" class="border rounded px-3 py-2">
-        <input id="source" type="text" placeholder="Source" class="border rounded px-3 py-2">
-        <input id="time_spent" type="number" placeholder="Time Spent" class="border rounded px-3 py-2">
-        <input id="pages_visited" type="number" placeholder="Pages Visited" class="border rounded px-3 py-2">
-      </div>
+<h3>Leads</h3>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Age</th>
+      <th>Income</th>
+      <th>Source</th>
+      <th>Score</th>
+      <th>Category</th>
+    </tr>
+  </thead>
+  <tbody id="table"></tbody>
+</table>
 
-      <button onclick="predictLead()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-        Predict Lead
-      </button>
-    </div>
-
-    <!-- Result Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-      <div class="bg-white rounded-xl shadow p-6">
-        <p class="text-gray-500">Score</p>
-        <p id="score" class="text-4xl font-bold">-</p>
-      </div>
-
-      <div class="bg-white rounded-xl shadow p-6">
-        <p class="text-gray-500">Category</p>
-        <span id="category" class="inline-block mt-2 px-4 py-1 rounded-full bg-gray-200 text-gray-800">
-          -
-        </span>
-      </div>
-    </div>
-
-    <!-- Leads Table -->
-    <div class="bg-white rounded-xl shadow p-6">
-      <h2 class="text-xl font-semibold mb-4">Leads</h2>
-
-      <div class="overflow-x-auto">
-        <table class="w-full border-collapse">
-          <thead>
-            <tr class="bg-slate-200 text-left">
-              <th class="p-2">Age</th>
-              <th class="p-2">Income</th>
-              <th class="p-2">Source</th>
-              <th class="p-2">Score</th>
-              <th class="p-2">Category</th>
-            </tr>
-          </thead>
-          <tbody id="leadsTable"></tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    const API_URL = "https://ai-lead-scoring-backend.onrender.com/predict";
-
-    async function predictLead() {
-      const data = {
-        age: Number(document.getElementById("age").value),
-        income: Number(document.getElementById("income").value),
-        source: document.getElementById("source").value,
-        time_spent: Number(document.getElementById("time_spent").value),
-        pages_visited: Number(document.getElementById("pages_visited").value)
-      };
-
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-
-      const result = await res.json();
-
-      document.getElementById("score").innerText = result.score;
-
-      const categoryEl = document.getElementById("category");
-      categoryEl.innerText = result.lead_category;
-
-      categoryEl.className = "inline-block mt-2 px-4 py-1 rounded-full text-white";
-
-      if (result.lead_category.toLowerCase().includes("hot")) {
-        categoryEl.classList.add("bg-red-500");
-      } else if (result.lead_category.toLowerCase().includes("warm")) {
-        categoryEl.classList.add("bg-orange-500");
-      } else {
-        categoryEl.classList.add("bg-blue-500");
-      }
-
-      const row = `
-        <tr class="border-b">
-          <td class="p-2">${data.age}</td>
-          <td class="p-2">${data.income}</td>
-          <td class="p-2">${data.source}</td>
-          <td class="p-2 font-semibold">${result.score}</td>
-          <td class="p-2">${result.lead_category}</td>
-        </tr>
-      `;
-
-      document.getElementById("leadsTable").insertAdjacentHTML("afterbegin", row);
-    }
-  </script>
-
+<script src="script.js"></script>
 </body>
 </html>
