@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Lead Scoring</title>
+</head>
+<body>
+
+<h1>AI Lead Scoring Demo</h1>
+
+<input id="age" placeholder="Age">
+<input id="income" placeholder="Income">
+<input id="source" placeholder="Source">
+<input id="time_spent" placeholder="Time Spent">
+<input id="pages_visited" placeholder="Pages Visited">
+
+<br><br>
+<button onclick="predictLead()">Predict Lead</button>
+
+<h3>Result</h3>
+<p>Score: <span id="score">-</span></p>
+<p>Category: <span id="category">-</span></p>
+
+<h3>Leads</h3>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Age</th>
+      <th>Income</th>
+      <th>Source</th>
+      <th>Score</th>
+      <th>Category</th>
+    </tr>
+  </thead>
+  <tbody id="table"></tbody>
+</table>
+
+<script src="script.js"></script>
+</body>
+</html>
